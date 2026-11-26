@@ -1,0 +1,70 @@
+﻿@model IEnumerable<NationalParkWebApp.Models.Appointment>
+
+@{
+    ViewData["Title"] = "My Appointments";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">My Appointments</h2>
+
+    @if (TempData["success"] != null)
+    {
+        <div class="alert alert-success">@TempData["success"]</div>
+    }
+
+    @if (TempData["error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["error"]</div>
+    }
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info">
+            No appointments found.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Visit Date</th>
+                        <th>Adults</th>
+                        <th>Children</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var appointment in Model)
+                    {
+                        <tr>
+                            <td>@appointment.Id</td>
+                            <td>@appointment.VisitDate.ToString("dd-MM-yyyy")</td>
+                            <td>@appointment.AdultCount</td>
+                            <td>@appointment.ChildCount</td>
+                            <td>@appointment.Status</td>
+                            <td>
+                                @if (appointment.Status != "Cancelled")
+                                {
+                                    <a asp-controller="Appointment"
+                                       asp-action="Cancel"
+                                       asp-route-id="@appointment.Id"
+                                       class="btn btn-danger btn-sm">
+                                        Cancel
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Cancelled</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

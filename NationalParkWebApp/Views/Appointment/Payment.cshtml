@@ -1,0 +1,126 @@
+﻿@{
+    ViewData["Title"] = "Payment Details";
+
+    int adults = ViewBag.AdultCount ?? 0;
+    int children = ViewBag.ChildCount ?? 0;
+    decimal adultTotal = ViewBag.AdultTotal ?? 0;
+    decimal childTotal = ViewBag.ChildTotal ?? 0;
+    decimal totalAmount = ViewBag.TotalAmount ?? 0;
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-xl-7">
+
+            <div class="text-center mb-4">
+                <h2 class="fw-bold">Complete Your Booking</h2>
+                <p class="text-muted">
+                    Review your visitor details and ticket charges.
+                </p>
+            </div>
+
+            <div class="card border-0 shadow">
+                <div class="card-header bg-primary text-white p-4">
+                    <h4 class="mb-1">Payment Summary</h4>
+                    <p class="mb-0">
+                        National Park Visitor Tickets
+                    </p>
+                </div>
+
+                <div class="card-body p-4 p-md-5">
+
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h6 class="text-muted mb-1">Total Visitors</h6>
+                            <h4 class="fw-bold mb-0">@(adults + children)</h4>
+                        </div>
+
+                        <span class="badge bg-warning text-dark p-2">
+                            Payment Pending
+                        </span>
+                    </div>
+
+                    <hr />
+
+                    <h5 class="fw-bold mb-4">Ticket Details</h5>
+
+                    <div class="row align-items-center mb-4">
+                        <div class="col-7">
+                            <h6 class="fw-bold mb-1">Adult Tickets</h6>
+                            <p class="text-muted small mb-0">
+                                @adults ticket(s) × ₹200
+                            </p>
+                        </div>
+                        <div class="col-5 text-end">
+                            <h5 class="mb-0">₹@adultTotal.ToString("N2")</h5>
+                        </div>
+                    </div>
+
+                    <div class="row align-items-center mb-4">
+                        <div class="col-7">
+                            <h6 class="fw-bold mb-1">Child Tickets</h6>
+                            <p class="text-muted small mb-0">
+                                @children ticket(s) × ₹100
+                            </p>
+                        </div>
+                        <div class="col-5 text-end">
+                            <h5 class="mb-0">₹@childTotal.ToString("N2")</h5>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <div class="bg-light rounded p-4 mt-4">
+                        <p class="text-muted mb-2">Total Amount Payable</p>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h2 class="text-primary fw-bold mb-0">
+                                ₹@totalAmount.ToString("N2")
+                            </h2>
+                            <span class="badge bg-light text-dark border">
+                                INR
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info mt-4 mb-4">
+                        <h6 class="fw-bold">Before you proceed</h6>
+                        <p class="mb-0 small">
+                            Please verify the number of adult and child tickets
+                            and the total amount before making your payment.
+                        </p>
+                    </div>
+                    <form asp-controller="Appointment"
+                          asp-action="CreateCheckoutSession"
+                          method="post">
+
+                        @Html.AntiForgeryToken()
+
+                        <button type="submit"
+                                class="btn btn-primary btn-lg w-100">
+                            Pay ₹@totalAmount.ToString("N2") with Stripe
+                        </button>
+                    </form>
+
+                    <p class="text-muted text-center small mt-3 mb-0">
+                        You will be redirected to Stripe's secure checkout page.
+                    </p>
+
+
+                    <div class="text-center mt-4">
+                        <a href="/NationalPark/Index"
+                           class="btn btn-outline-secondary">
+                            Back to National Parks
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+
+            <p class="text-center text-muted small mt-4">
+                Thank you for planning your visit!
+            </p>
+
+        </div>
+    </div>
+</div>

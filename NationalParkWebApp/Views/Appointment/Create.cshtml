@@ -1,0 +1,205 @@
+﻿@model NationalParkWebApp.Models.ViewModels.AppointmentVM
+
+@{
+    ViewData["Title"] = "Book Appointment";
+}
+
+<div class="container py-4">
+    <h2 class="mb-4">Book Your National Park Visit</h2>
+
+    <div class="row g-4">
+
+        <!-- LEFT SIDE: National Park Details and Trails -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm mb-4">
+                @if (Model.NationalPark.Picture != null &&
+                     Model.NationalPark.Picture.Length > 0)
+                {
+                    <img src="data:image/jpeg;base64,@Convert.ToBase64String(Model.NationalPark.Picture)"
+                         class="card-img-top"
+                         alt="@Model.NationalPark.Name"
+                         style="display:block; width:100%; height:300px; object-fit:cover; object-position:center;" />
+                }
+                else
+                {
+                    <div class="bg-light text-center py-5">
+                        <p class="mb-0">No park image available.</p>
+                    </div>
+                }
+
+                <div class="card-body">
+                    <h3 class="card-title">@Model.NationalPark.Name</h3>
+
+                    <p class="mb-2">
+                        <strong>State:</strong>
+                        @Model.NationalPark.State
+                    </p>
+
+                    <p class="mb-0">
+                        <strong>Established:</strong>
+                        @Model.NationalPark.Established.ToString("dd MMM yyyy")
+                    </p>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h4 class="mb-0">Available Trails</h4>
+                </div>
+
+                <div class="card-body">
+                    @if (Model.TrailList != null && Model.TrailList.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Trail Name</th>
+                                        <th>Distance</th>
+                                        <th>Elevation</th>
+                                        <th>Difficulty</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var trail in Model.TrailList)
+                                    {
+                                        <tr>
+                                            <td>@trail.Name</td>
+                                            <td>@trail.Distance</td>
+                                            <td>@trail.Elevation</td>
+                                            <td>@trail.Difficulty</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted mb-0">
+                            No trails available for this national park.
+                        </p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT SIDE: Appointment Form -->
+        <div class="col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h4 class="mb-0">Visitor Details</h4>
+                </div>
+
+                <div class="card-body">
+                    <form asp-controller="Appointment"
+                          asp-action="Create"
+                          method="post">
+
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden"
+                               asp-for="Appointment.NationalParkId" />
+
+                        <div asp-validation-summary="ModelOnly"
+                             class="text-danger mb-3"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Appointment.Name"
+                                   class="form-label">Full Name</label>
+                            <input asp-for="Appointment.Name"
+                                   class="form-control"
+                                   placeholder="Enter your full name" />
+                            <span asp-validation-for="Appointment.Name"
+                                  class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Appointment.VisitDate"
+                                   class="form-label">Visit Date</label>
+                            <input asp-for="Appointment.VisitDate"
+                                   type="date"
+                                   asp-format="{0:yyyy-MM-dd}"
+                                   min="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")"
+                                   class="form-control" />
+                            <span asp-validation-for="Appointment.VisitDate"
+                                  class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Appointment.Address"
+                                   class="form-label">Address</label>
+                            <textarea asp-for="Appointment.Address"
+                                      class="form-control"
+                                      rows="2"
+                                      placeholder="Enter your address"></textarea>
+                            <span asp-validation-for="Appointment.Address"
+                                  class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Appointment.PhoneNumber"
+                                   class="form-label">Phone Number</label>
+                            <input asp-for="Appointment.PhoneNumber"
+                                   class="form-control"
+                                   placeholder="Enter phone number" />
+                            <span asp-validation-for="Appointment.PhoneNumber"
+                                  class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Appointment.Email"
+                                   class="form-label">Email</label>
+                            <input asp-for="Appointment.Email"
+                                   class="form-control"
+                                   placeholder="Enter email address" />
+                            <span asp-validation-for="Appointment.Email"
+                                  class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Appointment.AdultCount"
+                                       class="form-label">Adults</label>
+                                <input asp-for="Appointment.AdultCount"
+                                       type="number"
+                                       min="0"
+                                       max="5"
+                                       class="form-control" />
+                                <span asp-validation-for="Appointment.AdultCount"
+                                      class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Appointment.ChildCount"
+                                       class="form-label">Children</label>
+                                <input asp-for="Appointment.ChildCount"
+                                       type="number"
+                                       min="0"
+                                       max="5"
+                                       class="form-control" />
+                                <span asp-validation-for="Appointment.ChildCount"
+                                      class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <button type="submit"
+                                class="btn btn-primary w-100">
+                            Book Appointment
+                        </button>
+
+                        <a asp-controller="Home" asp-action="Index"
+                           class="btn btn-outline-secondary w-100 mt-2">
+                            Back to National Parks
+                        </a>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

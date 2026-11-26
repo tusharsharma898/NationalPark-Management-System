@@ -1,0 +1,118 @@
+﻿
+@model NationalParkWebApp.Models.Appointment
+
+@{
+    ViewData["Title"] = "Cancel Appointment";
+}
+
+<div class="container mt-5">
+    <div class="card shadow mx-auto" style="max-width: 600px;">
+
+        <div class="card-header bg-danger text-white">
+            <h4 class="mb-0">Cancel Appointment</h4>
+        </div>
+
+        <div class="card-body">
+
+            <h5 class="text-danger mb-3">
+                Are you sure you want to cancel this appointment?
+            </h5>
+
+            <hr />
+
+            <dl class="row">
+                <dt class="col-sm-5">Appointment ID</dt>
+                <dd class="col-sm-7">@Model.Id</dd>
+
+                <dt class="col-sm-5">Visit Date</dt>
+                <dd class="col-sm-7">
+                    @Model.VisitDate.ToString("dd-MM-yyyy")
+                </dd>
+
+                <dt class="col-sm-5">Email</dt>
+                <dd class="col-sm-7">@Model.Email</dd>
+
+                <dt class="col-sm-5">Adults</dt>
+                <dd class="col-sm-7">@Model.AdultCount</dd>
+
+                <dt class="col-sm-5">Children</dt>
+                <dd class="col-sm-7">@Model.ChildCount</dd>
+
+                <dt class="col-sm-5">Status</dt>
+                <dd class="col-sm-7">
+                    @if (Model.Status == "Cancelled")
+                    {
+                        <span class="badge bg-danger">Cancelled</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-success">@Model.Status</span>
+                    }
+                </dd>
+            </dl>
+
+            <div class="alert alert-info">
+                After cancellation, you will receive an email confirming
+                your cancellation and informing you that your refund
+                will be processed shortly.
+            </div>
+
+            @if (Model.Status != "Cancelled")
+            {
+                <form asp-controller="Appointment"
+                      asp-action="CancelConfirmed"
+                      method="post">
+
+                    @Html.AntiForgeryToken()
+
+                    <input type="hidden"
+                           name="id"
+                           value="@Model.Id" />
+                    <button type="submit"
+                            class="btn btn-danger"
+                            onclick="return confirmCancel(event);">
+                        Yes, Cancel Appointment
+                    </button>
+
+                    <a asp-controller="Home"
+                       asp-action="Index"
+                       class="btn btn-secondary ms-2">
+                        Go Back
+                    </a>
+                </form>
+            }
+            else
+            {
+                <div class="alert alert-danger">
+                    This appointment has already been cancelled.
+                </div>
+
+                <a asp-controller="Home"
+                   asp-action="Index"
+                   class="btn btn-secondary">
+                    Go Back
+                </a>
+            }
+
+        </div>
+    </div>
+</div>
+<script>
+    function confirmCancel(event) {
+        event.preventDefault();
+
+        swal({
+            title: "Are you sure?",
+            text: "Do you really want to cancel this appointment?",
+            icon: "warning",
+            buttons: ["No, Keep It", "Yes, Cancel"],
+            dangerMode: true
+        }).then((willCancel) => {
+            if (willCancel) {
+                event.target.closest("form").submit();
+            }
+        });
+
+        return false;
+    }
+</script>
